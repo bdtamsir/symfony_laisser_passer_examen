@@ -1,0 +1,107 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+	<div class="container mt-5">
+		<h2 class="text-center">Nouvelle Commande</h2>
+
+		<form method="get" action="{{ path('commande.create') }}" class="mb-4 mt-5">
+			<div class="input-group">
+				<input type="text" name="telephone" class="form-control" placeholder="Entrez le numéro de téléphone" value="{{ app.request.query.get('telephone') }}">
+				<button type="submit" class="btn btn-primary">Rechercher</button>
+			</div>
+		</form>
+
+		{% if client %}
+			<div class="alert alert-info">
+				<p>
+					<strong>Client trouvé :</strong>
+					{{ client.nom }}
+					{{ client.prenom }}</p>
+				<p>
+					<strong>Adresse :</strong>
+					{{ client.ville }},
+					{{ client.quartier }},
+					{{ client.numVilla }}</p>
+			</div>
+		{% endif %}
+
+		{{ form_start(formLigneCommande) }}
+		<div class="row">
+			<div class="col-md-4">
+				{{ form_row(formLigneCommande.article) }}
+			</div>
+			<div class="col-md-2">
+				{{ form_row(formLigneCommande.prixUnitaire) }}
+			</div>
+			<div class="col-md-2">
+				{{ form_row(formLigneCommande.quantite) }}
+			</div>
+			<div class="col-md-2">
+				<button type="submit" class="btn btn-success">Ajouter</button>
+			</div>
+		</div>
+		{{ form_end(formLigneCommande) }}
+
+		{% if ligneCommandes is not empty %}
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Article</th>
+						<th>Prix Unitaire</th>
+						<th>Quantité</th>
+						<th>Montant</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for ligne in ligneCommandes %}
+						<tr>
+							<td>{{ ligne.article.libelle }}</td>
+							<td>{{ ligne.prixUnitaire }}</td>
+							<td>{{ ligne.quantite }}</td>
+							<td>{{ ligne.montant }}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="3" class="text-end">
+							<strong>Total :</strong>
+						</td>
+						<td>{{ total }}</td>
+					</tr>
+				</tfoot>
+			</table>
+			{% if client %}
+				<a href="{{ path('commande.validate', { clientId: client.id }) }}" class="btn btn-primary">Valider la Commande</a>
+			{% else %}
+				<div class="alert alert-danger">Veuillez rechercher et sélectionner un client pour valider la commande.</div>
+			{% endif %}
+
+		{% endif %}
+	</div>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+const articleField = document.querySelector('#ligne_commande_article');
+const prixField = document.querySelector('#ligne_commande_prixUnitaire');
+const quantiteField = document.querySelector('#ligne_commande_quantite');
+
+const prixData = JSON.parse(articleField.dataset.prix || '{}');
+const stockData = JSON.parse(articleField.dataset.stock || '{}');
+
+articleField.addEventListener('change', function () {
+const articleId = articleField.value;
+prixField.value = prixData[articleId] || '';
+quantiteField.max = stockData[articleId] || 0;
+});
+
+quantiteField.addEventListener('input', function () {
+const max = parseInt(quantiteField.max, 10);
+if (parseInt(quantiteField.value, 10) > max) {
+alert('Quantité demandée dépasse le stock disponible.');
+quantiteField.value = max;
+}
+});
+});
+	</script>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+<div class="container mt-5">
+    <h2 class="text-center">Liste des Commandes</h2>
+
+    <table class="table mt-5">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Client</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for commande in commandes %}
+                <tr>
+                    <td>{{ commande.id }}</td>
+                    <td>{{ commande.dateAt|date('d/m/Y') }}</td>
+                    <td>{{ commande.client.nom }} {{ commande.client.prenom }}</td>
+                    <td>{{ commande.total }}</td>
+                    <td>
+                        <a href="{{ path('commande.edit', { id: commande.id }) }}" class="btn btn-sm btn-primary">Editer</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

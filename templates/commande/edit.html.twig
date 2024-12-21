@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+<div class="container mt-5">
+    <h2 class="text-center">Modifier la Commande #{{ commande.id }}</h2>
+
+    <table class="table mt-4">
+        <thead>
+            <tr>
+                <th>Article</th>
+                <th>Prix Unitaire</th>
+                <th>Quantité</th>
+                <th>Montant</th>
+            </tr>
+        </thead>
+        <tbody>
+            <form method="post" action="{{ path('commande.edit', { id: commande.id }) }}">
+                {% for ligne in ligneCommandes %}
+                    <tr>
+                        <td>{{ ligne.article.libelle }}</td>
+                        <td>
+                            <input type="number" name="prixUnitaire_{{ ligne.id }}" value="{{ ligne.prixUnitaire }}" class="form-control">
+                        </td>
+                        <td>
+                            <input type="number" name="quantite_{{ ligne.id }}" value="{{ ligne.quantite }}" class="form-control">
+                        </td>
+                        <td>{{ ligne.montant }}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="3" class="text-end"><strong>Total :</strong></td>
+                    <td><strong>{{ commande.total }}</strong></td>
+                </tr>
+                <tr>
+                    <td colspan="4" class="text-end">
+                        <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                    </td>
+                </tr>
+            </form>
+        </tbody>
+    </table>
+</div>
+{% endblock %}
